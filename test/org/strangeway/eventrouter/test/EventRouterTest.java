@@ -42,8 +42,14 @@ public class EventRouterTest {
         );
 
         assertTrue(eventRouter.hasListeners(TextChangeEvent.class));
-        eventRouter.fireListeners(TextChangeEvent.class, new TextChangeEvent(new Label()));
+        eventRouter.fireListeners(TextChangeEvent.class, new CustomTextChangeEvent(new Label()));
 
         Assert.assertEquals(1, counter.get());
+    }
+
+    protected static class CustomTextChangeEvent extends TextChangeEvent {
+        public CustomTextChangeEvent(Label source) {
+            super(source);
+        }
     }
 }

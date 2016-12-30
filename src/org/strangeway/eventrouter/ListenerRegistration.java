@@ -17,6 +17,8 @@
 package org.strangeway.eventrouter;
 
 /**
+ * Listener registration object that can remove listener from {@link EventRouter}.
+ *
  * @author Yuriy Artamonov
  * @since 1.0
  */

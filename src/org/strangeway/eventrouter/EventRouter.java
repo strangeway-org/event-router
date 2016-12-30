@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * EventRouter class implementing the non-inheritable event listening model.
+ * EventRouter class implementing the event listening model with concrete event classes.
  *
  * @author Yuriy Artamonov
  * @since 1.0
@@ -34,8 +34,16 @@ public class EventRouter {
 
     // Map with listener classes and listener lists
     // Lists are created on demand
-    private Map<Class, List<Consumer>> events = null;
+    protected Map<Class, List<Consumer>> events = null;
 
+    /**
+     * Add an event listener for events with type T.
+     *
+     * @param eventType event class
+     * @param listener  listener
+     * @param <T>       type of event
+     * @return registration object
+     */
     public <T> ListenerRegistration addListener(Class<T> eventType, Consumer<T> listener) {
         if (eventType == null) {
             throw new IllegalArgumentException("eventType cannot be null");
@@ -57,6 +65,14 @@ public class EventRouter {
         return new ListenerRegistrationImpl<>(this, eventType, listener);
     }
 
+    /**
+     * Remove an event listener for events with type T.
+     *
+     * @param eventType event class
+     * @param listener  listener
+     * @param <T>       type of event
+     * @return true if listener has been removed
+     */
     public <T> boolean removeListener(Class<T> eventType, Consumer<T> listener) {
         if (eventType == null) {
             throw new IllegalArgumentException("eventType cannot be null");
@@ -79,6 +95,13 @@ public class EventRouter {
         return false;
     }
 
+    /**
+     * Check if there are listeners for event type T.
+     *
+     * @param eventType event class
+     * @param <T>       type of event
+     * @return true if there are one or more listeners for type T
+     */
     public <T> boolean hasListeners(Class<T> eventType) {
         if (eventType == null) {
             throw new IllegalArgumentException("eventType cannot be null");
@@ -88,6 +111,13 @@ public class EventRouter {
                 && events.get(eventType) != null;
     }
 
+    /**
+     * Fire listeners for event type T.
+     *
+     * @param eventType event class
+     * @param event     event object
+     * @param <T>       type of event
+     */
     public <T> void fireListeners(Class<T> eventType, T event) {
         if (eventType == null) {
             throw new IllegalArgumentException("eventType cannot be null");
