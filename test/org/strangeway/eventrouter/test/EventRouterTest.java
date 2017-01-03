@@ -16,16 +16,15 @@
 
 package org.strangeway.eventrouter.test;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.strangeway.eventrouter.EventRouter;
+import org.strangeway.eventrouter.ListenerRegistration;
 import org.strangeway.eventrouter.test.components.Label;
 import org.strangeway.eventrouter.test.components.Label.TextChangeEvent;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Yuriy Artamonov
@@ -44,12 +43,38 @@ public class EventRouterTest {
         assertTrue(eventRouter.hasListeners(TextChangeEvent.class));
         eventRouter.fireListeners(TextChangeEvent.class, new CustomTextChangeEvent(new Label()));
 
-        Assert.assertEquals(1, counter.get());
+        assertEquals(1, counter.get());
+    }
+
+    @Test
+    public void component() {
+        Label label = new Label();
+
+        AtomicInteger counter = new AtomicInteger();
+        ListenerRegistration registration = label.addTextChangeListener(event ->
+                counter.addAndGet(1)
+        );
+
+        label.setText("!");
+
+        assertEquals(1, counter.get());
+
+        registration.removeListener();
+
+        label.setText("@");
+
+        assertEquals(1, counter.get());
     }
 
     protected static class CustomTextChangeEvent extends TextChangeEvent {
         public CustomTextChangeEvent(Label source) {
             super(source);
+        }
+    }
+
+    protected static class ExternalListener {
+
+        public void onTextChange() {
         }
     }
 }

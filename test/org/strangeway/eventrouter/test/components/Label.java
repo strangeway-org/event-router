@@ -20,12 +20,15 @@ import org.strangeway.eventrouter.EventRouter;
 import org.strangeway.eventrouter.ListenerRegistration;
 
 import java.util.EventObject;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
  * @author Yuriy Artamonov
  */
 public class Label {
+    protected String text;
+
     protected EventRouter eventRouter = new EventRouter();
 
     public ListenerRegistration addTextChangeListener(Consumer<TextChangeEvent> listener) {
@@ -34,6 +37,19 @@ public class Label {
 
     public boolean removeTextChangeListener(Consumer<TextChangeEvent> listener) {
         return eventRouter.removeListener(TextChangeEvent.class, listener);
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        if (!Objects.equals(this.text, text)) {
+            this.text = text;
+
+            TextChangeEvent event = new TextChangeEvent(this);
+            eventRouter.fireListeners(TextChangeEvent.class, event);
+        }
     }
 
     public static class TextChangeEvent extends EventObject {
